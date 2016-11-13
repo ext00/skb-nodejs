@@ -3,27 +3,54 @@ var app = express();
 var cors = require('cors');
 
 app.use(cors());
-app.get('/2a', function (req, res) {
-	const sum = sumTwoElement(req.query.a,req.query.b).toString();
-  	res.send(sum);
+app.get('/2b', function (req, res) {
+	const fullname = req.query.fullname
+	const words = validator(fullname);
+  	res.send(validator(req.query.fullname));
 });
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
 
-function isDigit(n) {
-	return (typeof n === 'number' || typeof n === 'string') && isFinite(n);
 
+
+function getWords(str){
+	return str.split(" ");
 }
 
-function getDigitFromAll(n){
-	if (isDigit(n))
-		return n;
-	else
-		return 0;		
+function lengthValidator(str){
+	//length = getWords(str).length;
+	if (getWords(str).length > 3){
+		return false;
+	}
+	return true;
 }
 
-function sumTwoElement(a, b){
-	return 1*getDigitFromAll(a) + 1*getDigitFromAll(b);
+function nullValidator(str){
+	if (str != ''){
+		return true;
+	}
+	else return false;
+}
+
+function digitValidator(str) {
+        return /[-\s0-9`~!@#$%^&*()_=+\\|\[\]{};:'",.<>\/?]/;
+}
+
+
+
+function validator(str){
+	if(lengthValidator(str) && nullValidator(str) && digitValidator(str)){
+		return getFIO(str);
+	}
+	return 'Invalid fullname';
+}
+
+function getFIO(str){
+	const FIO = getWords(str);
+	//length = FIO.length;
+	if (getWords(str).length == 1) {return FIO[0];}
+	else if(getWords(str).length == 2) {return (FIO[1]  + ' ' + FIO[0].charAt(0) + '.');}
+	else {return (FIO[2]  + ' ' + FIO[0].charAt(0) + '. ' + FIO[1].charAt(0) + '.');}
 }
